@@ -13,9 +13,9 @@ public class PackageProject : BuildToolAction
             throw new Exception("ArchiveDirectory argument is required for the Publish action.");
         }
 
-        string rootProjectPath = Path.Combine(archiveDirectoryPath, Program.BuildToolOptions.ProjectName);
+        string rootProjectPath = Path.Combine(archiveDirectoryPath, Program.Configuration.ProjectName);
         string binariesPath = Program.GetOutputPath(rootProjectPath);
-        string bindingsPath = Path.Combine(Program.BuildToolOptions.PluginDirectory, "Managed", "UnrealSharp");
+        string bindingsPath = Path.Combine(Program.Configuration.PluginDirectory, "Managed", "UnrealSharp");
         
         Collection<string> extraArguments =
         [
@@ -25,10 +25,10 @@ public class PackageProject : BuildToolAction
             $"-p:PublishDir=\"{binariesPath}\""
         ];
 
-        BuildSolution buildBindings = new BuildSolution(bindingsPath, extraArguments, BuildConfig.Publish);
+        BuildSolution buildBindings = new BuildSolution(bindingsPath, extraArguments, TargetConfiguration.Publish);
         buildBindings.RunAction();
         
-        BuildUserSolution buildUserSolution = new BuildUserSolution(null, BuildConfig.Publish);
+        BuildUserSolution buildUserSolution = new BuildUserSolution(null, TargetConfiguration.Publish);
         buildUserSolution.RunAction();
         
         WeaveProject weaveProject = new WeaveProject(binariesPath);

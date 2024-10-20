@@ -4,14 +4,14 @@ namespace UnrealSharpBuildTool.Actions;
 
 public class BuildSolution : BuildToolAction
 {
-    private readonly BuildConfig _buildConfig;
+    private readonly TargetConfiguration _targetConfiguration;
     private readonly string _folder;
     private readonly Collection<string>? _extraArguments;
     
-    public BuildSolution(string folder, Collection<string>? extraArguments = null, BuildConfig buildConfig = BuildConfig.Debug)
+    public BuildSolution(string folder, Collection<string>? extraArguments = null, TargetConfiguration targetConfiguration = TargetConfiguration.Debug)
     {
         _folder = Program.FixPath(folder);
-        _buildConfig = buildConfig;
+        _targetConfiguration = targetConfiguration;
         _extraArguments = extraArguments;
     }
     
@@ -24,7 +24,7 @@ public class BuildSolution : BuildToolAction
         
         BuildToolProcess buildSolutionProcess = new BuildToolProcess();
         
-        if (_buildConfig == BuildConfig.Publish)
+        if (_targetConfiguration == TargetConfiguration.Publish)
         {
             buildSolutionProcess.StartInfo.ArgumentList.Add("publish");
         }
@@ -36,7 +36,7 @@ public class BuildSolution : BuildToolAction
         buildSolutionProcess.StartInfo.ArgumentList.Add($"{_folder}");
         
         buildSolutionProcess.StartInfo.ArgumentList.Add("--configuration");
-        buildSolutionProcess.StartInfo.ArgumentList.Add(Program.GetBuildConfiguration(_buildConfig));
+        buildSolutionProcess.StartInfo.ArgumentList.Add(Program.GetBuildConfiguration(_targetConfiguration));
         
         if (_extraArguments != null)
         {

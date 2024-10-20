@@ -209,7 +209,7 @@ public class GenerateProject : BuildToolAction
     
     private string GetRelativePathToUnrealSharp(string basePath)
     {
-        string targetPath = Path.Combine(basePath, Program.BuildToolOptions.PluginDirectory);
+        string targetPath = Path.Combine(basePath, Program.Configuration.PluginDirectory);
         return GetRelativePath(basePath, targetPath);
     }
     
@@ -249,11 +249,11 @@ public class GenerateProject : BuildToolAction
         string executablePath = string.Empty;
         if (OperatingSystem.IsWindows())
         {
-            executablePath = Path.Combine(Program.BuildToolOptions.EngineDirectory, "Binaries", "Win64", "UnrealEditor.exe");
+            executablePath = Path.Combine(Program.Configuration.EngineDirectory, "Binaries", "Win64", "UnrealEditor.exe");
         }
         else if (OperatingSystem.IsMacOS())
         {
-            executablePath = Path.Combine(Program.BuildToolOptions.EngineDirectory, "Binaries", "Mac", "UnrealEditor");
+            executablePath = Path.Combine(Program.Configuration.EngineDirectory, "Binaries", "Mac", "UnrealEditor");
         }
         string commandLineArgs = Program.FixPath(Program.GetUProjectFilePath());
         

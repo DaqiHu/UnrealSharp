@@ -4,7 +4,7 @@ using CommandLine.Text;
 
 namespace UnrealSharpBuildTool;
 
-public enum BuildAction : int
+public enum BuildAction
 {
     Build,
     Clean,
@@ -14,16 +14,10 @@ public enum BuildAction : int
     PackageProject,
     GenerateSolution,
     BuildWeave,
+    PublishAOT,
 }
 
-public enum BuildConfig : int
-{
-    Debug,
-    Release,
-    Publish,
-}
-
-public class BuildToolOptions
+public class Configuration
 {
     [Option("Action", Required = true, HelpText = "The action the build tool should process. Possible values: Build, Clean, GenerateProject, Rebuild, Weave, PackageProject, GenerateSolution, BuildWeave.")]
     public BuildAction Action { get; set; }
@@ -45,6 +39,24 @@ public class BuildToolOptions
     
     [Option("AdditionalArgs", Required = false, HelpText = "Additional key-value arguments for the build tool.")]
     public IEnumerable<string> AdditionalArgs { get; set; }
+    
+    /// <summary>
+    /// The target configuration to build. If not specified builds all supported configurations.
+    /// </summary>
+    [Option("BuildConfigurations", HelpText = "The target configuration to build. If not specified builds all supported configurations.")]
+    public TargetConfiguration BuildConfiguration { get; set; }
+
+    /// <summary>
+    /// The target platform to build. If not specified builds all supported platforms.
+    /// </summary>
+    [Option("buildplatforms", HelpText = "The target platform to build. If not specified builds all supported platforms.")]
+    public TargetPlatform BuildPlatform { get; set; }
+
+    /// <summary>
+    /// The target platform architecture to build. If not specified builds all valid architectures.
+    /// </summary>
+    [Option("arch", HelpText = "The target platform architecture to build. If not specified builds all valid architectures.")]
+    public TargetArchitecture BuildArchitecture { get; set; }
     
     public string TryGetArgument(string argument)
     {
@@ -73,7 +85,7 @@ public class BuildToolOptions
         return false;
     }
 
-    public static void PrintHelp(ParserResult<BuildToolOptions> result)
+    public static void PrintHelp(ParserResult<Configuration> result)
     {
         string name = Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
         Console.Error.WriteLine($"Usage: {name} [options]");

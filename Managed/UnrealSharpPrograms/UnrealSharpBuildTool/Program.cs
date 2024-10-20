@@ -5,7 +5,7 @@ namespace UnrealSharpBuildTool;
 
 public static class Program
 {
-    public static BuildToolOptions BuildToolOptions = null!;
+    public static Configuration Configuration = null!;
 
     public static int Main(string[] args)
     {
@@ -13,11 +13,11 @@ public static class Program
         {
             Console.WriteLine(">>> UnrealSharpBuildTool");
             Parser parser = new Parser(with => with.HelpWriter = null);
-            ParserResult<BuildToolOptions> result = parser.ParseArguments<BuildToolOptions>(args);
+            ParserResult<Configuration> result = parser.ParseArguments<Configuration>(args);
             
             if (result.Tag == ParserResultType.NotParsed)
             {
-                BuildToolOptions.PrintHelp(result);
+                Configuration.PrintHelp(result);
                 
                 string errors = string.Empty;
                 foreach (Error error in result.Errors)
@@ -31,14 +31,14 @@ public static class Program
                 throw new Exception($"Invalid arguments. Errors: {errors}");
             }
         
-            BuildToolOptions = result.Value;
+            Configuration = result.Value;
             
             if (!BuildToolAction.InitializeAction())
             {
                 throw new Exception("Failed to initialize action.");
             }
             
-            Console.WriteLine($"UnrealSharpBuildTool executed {BuildToolOptions.Action.ToString()} action successfully.");
+            Console.WriteLine($"UnrealSharpBuildTool executed {Configuration.Action.ToString()} action successfully.");
         }
         catch (Exception exception)
         {
@@ -51,22 +51,22 @@ public static class Program
     
     public static string TryGetArgument(string argument)
     {
-        return BuildToolOptions.TryGetArgument(argument);
+        return Configuration.TryGetArgument(argument);
     }
     
     public static bool HasArgument(string argument)
     {
-        return BuildToolOptions.HasArgument(argument);
+        return Configuration.HasArgument(argument);
     }
     
     public static string GetSolutionFile()
     {
-        return Path.Combine(GetScriptFolder(), BuildToolOptions.ProjectName + ".sln");
+        return Path.Combine(GetScriptFolder(), Configuration.ProjectName + ".sln");
     }
 
     public static string GetUProjectFilePath()
     {
-        return Path.Combine(BuildToolOptions.ProjectDirectory, BuildToolOptions.ProjectName + ".uproject");
+        return Path.Combine(Configuration.ProjectDirectory, Configuration.ProjectName + ".uproject");
     }
     
     public static string GetBuildConfiguration()
@@ -79,32 +79,32 @@ public static class Program
         return buildConfig;
     }
     
-    public static BuildConfig GetBuildConfig()
+    public static TargetConfiguration GetBuildConfig()
     {
         string buildConfig = GetBuildConfiguration();
-        Enum.TryParse(buildConfig, out BuildConfig config);
+        Enum.TryParse(buildConfig, out TargetConfiguration config);
         return config;
     }
     
-    public static string GetBuildConfiguration(BuildConfig buildConfig)
+    public static string GetBuildConfiguration(TargetConfiguration targetConfiguration)
     {
-        return buildConfig switch
+        return targetConfiguration switch
         {
-            BuildConfig.Debug => "Debug",
-            BuildConfig.Release => "Release",
-            BuildConfig.Publish => "Release",
+            TargetConfiguration.Debug => "Debug",
+            TargetConfiguration.Release => "Release",
+            TargetConfiguration.Publish => "Release",
             _ => "Release"
         };
     }
     
     public static string GetScriptFolder()
     {
-        return Path.Combine(BuildToolOptions.ProjectDirectory, "Script");
+        return Path.Combine(Configuration.ProjectDirectory, "Script");
     }
     
     public static string GetProjectDirectory()
     {
-        return BuildToolOptions.ProjectDirectory;
+        return Configuration.ProjectDirectory;
     }
     
     public static string FixPath(string path)
@@ -119,14 +119,14 @@ public static class Program
 
     public static string GetProjectNameAsManaged()
     {
-        return "Managed" + BuildToolOptions.ProjectName;
+        return "Managed" + Configuration.ProjectName;
     }
     
     public static string GetOutputPath(string rootDir = "")
     {
         if (string.IsNullOrEmpty(rootDir))
         {
-            rootDir = BuildToolOptions.ProjectDirectory;
+            rootDir = Configuration.ProjectDirectory;
         }
         
         return Path.Combine(rootDir, "Binaries", "Managed");
@@ -139,7 +139,7 @@ public static class Program
 
     public static string GetManagedBinariesDirectory()
     {
-        return Path.Combine(BuildToolOptions.PluginDirectory, "Binaries", "Managed");
+        return Path.Combine(Configuration.PluginDirectory, "Binaries", "Managed");
     }
     
     public static string GetVersion()
