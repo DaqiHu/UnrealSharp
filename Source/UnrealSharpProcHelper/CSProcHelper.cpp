@@ -272,7 +272,7 @@ FString FCSProcHelper::GetDotNetDirectory()
 	PathVariable.ParseIntoArray(Paths, FPlatformMisc::GetPathVarDelimiter());
 
 #if defined(_WIN32)
-	FString PathDotnet = "Program Files\\dotnet\\";
+	FString PathDotnet = "Program Files\\dotnet";
 #elif defined(__APPLE__)
 	FString PathDotnet = "/usr/local/share/dotnet/";
 	return PathDotnet;

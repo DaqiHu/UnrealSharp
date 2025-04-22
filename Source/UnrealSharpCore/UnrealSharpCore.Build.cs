@@ -98,7 +98,7 @@ public class UnrealSharpCore : ModuleRules
 		{
 			// This is a hack to avoid using the dotnet.exe from the Unreal Engine installation directory.
 			// Can't use the dotnet.exe from the Unreal Engine installation directory because it's .NET 6.0
-			if (!path.Contains(@"\dotnet\"))
+			if (!path.Contains(@"\dotnet"))
 			{
 				continue;
 			}
