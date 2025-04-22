@@ -14,18 +14,22 @@ public partial class SystemLibrary
     /// <param name="bLooping"> Whether the timer should loop. </param>
     /// <param name="initialStartDelay"> The initial delay before the timer starts. </param>
     /// <param name="initialStartDelayVariance"> The variance in the initial delay. </param>
+    /// <param name="worldContextObject"> The world context object (required for UObject actions). </param>
     /// <exception cref="ArgumentException"> Thrown if the target of the action is not an UObject. </exception>
-    public static FTimerHandle SetTimer(Action action, float time, bool bLooping, float initialStartDelay = 0.000000f)
+    public static FTimerHandle SetTimer(Action action, float time, bool bLooping, float initialStartDelay = 0.000000f, UObject worldContextObject = null)
     {
         unsafe
         {
-            if (action.Target is not UnrealSharpObject owner)
+            var owner = action.Target as UnrealSharpObject;
+            if (worldContextObject == null && owner == null)
             {
                 throw new ArgumentException("The target of the action must be an UObject.");
             }
+
+            var nativeObject = owner != null ? owner.NativeObject : worldContextObject.NativeObject;
             
             FTimerHandle timerHandle = new FTimerHandle();
-            UWorldExporter.CallSetTimer(owner.NativeObject, action.Method.Name, time, bLooping.ToNativeBool(), initialStartDelay, &timerHandle);
+            UWorldExporter.CallSetTimer(nativeObject, action.Method.Name, time, bLooping.ToNativeBool(), initialStartDelay, &timerHandle);
             return timerHandle;
         }
     }
