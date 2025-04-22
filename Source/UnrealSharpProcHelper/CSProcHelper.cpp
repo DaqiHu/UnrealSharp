@@ -298,7 +298,7 @@ FString FCSProcHelper::GetDotNetDirectory()
 FString FCSProcHelper::GetDotNetExecutablePath()
 {
 #if defined(_WIN32)
-	return GetDotNetDirectory() + "dotnet.exe";
+	return GetDotNetDirectory() + "\\dotnet.exe";
 #else
 	return GetDotNetDirectory() + "dotnet";
 #endif
