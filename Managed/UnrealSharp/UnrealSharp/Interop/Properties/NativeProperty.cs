@@ -8,12 +8,16 @@ internal class NativeProperty
     internal NativeProperty(IntPtr property)
     {
         Property = property;
+        // FProperty layout is immutable for the lifetime of this existing wrapper.
+        Offset = Bind_FProperty.CallGetPropertyOffset(property);
+        Size = Bind_FProperty.CallGetSize(property);
+        ArrayDim = Bind_FProperty.CallGetArrayDim(property);
     }
     
     internal readonly IntPtr Property;
-    internal int Offset => Bind_FProperty.CallGetPropertyOffset(Property);
-    internal int Size => Bind_FProperty.CallGetSize(Property);
-    internal int ArrayDim => Bind_FProperty.CallGetArrayDim(Property);
+    internal int Offset { get; }
+    internal int Size { get; }
+    internal int ArrayDim { get; }
     
     internal void DestroyValue(IntPtr valueAddress) => Bind_FProperty.CallDestroyValue(Property, valueAddress);
     internal void DestroyValue_Container(IntPtr valueAddress) => Bind_FProperty.CallDestroyValue_InContainer(Property, valueAddress);

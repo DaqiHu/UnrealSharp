@@ -134,7 +134,7 @@ public class NativeCallbacksWrapperGenerator : IIncrementalGenerator
 
             string funcPtrName = delegateName + "FuncPtr";
             sourceBuilder.AppendLine($"             IntPtr {funcPtrName} = UnrealSharp.Binds.NativeBinds.TryGetBoundFunction(\"{classInfo.Name}\", \"{delegateInfo.Name}\", {totalSizeDelegateName});");
-            sourceBuilder.Append($"             {delegateName} = (delegate* unmanaged<");
+            sourceBuilder.Append($"             {delegateName} = (delegate* {delegateInfo.CallingConvention}<");
             sourceBuilder.Append(string.Join(", ", delegateInfo.Parameters.Select(p =>
             {
                 string prefix = p.IsOutParameter ? "out " : p.IsRefParameter ? "ref " : string.Empty;
@@ -259,6 +259,7 @@ public class NativeCallbacksWrapperGenerator : IIncrementalGenerator
             var delegateInfo = new DelegateInfo
             {
                 Name = fieldDeclaration.Declaration.Variables.First().Identifier.ValueText,
+                CallingConvention = functionPointerTypeSyntax.CallingConvention?.ToString() ?? string.Empty,
                 Parameters = new List<DelegateParameterInfo>()
             };
 
@@ -308,6 +309,7 @@ internal struct ClassInfo
 internal struct DelegateInfo
 {
     public string Name;
+    public string CallingConvention;
     public List<DelegateParameterInfo> Parameters;
     public List<DelegateParameterInfo> ParametersAndReturnValue
     {
