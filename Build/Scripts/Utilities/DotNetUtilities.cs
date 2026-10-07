@@ -190,6 +190,11 @@ public static class DotNetUtilities
 
 	private static bool IsUnrealBundledDotNet(string dotnetPath)
 	{
+		// Benchmark-only opt-in: the registered Engine provides a verified .NET 10 SDK.
+		if (Environment.GetEnvironmentVariable("UNREALSHARP_BENCH_ALLOW_ENGINE_DOTNET") == "1")
+		{
+			return false;
+		}
 		string Normalised = dotnetPath.Replace('\\', '/');
 		return Normalised.Contains("/Binaries/ThirdParty/DotNet/", StringComparison.OrdinalIgnoreCase);
 	}
